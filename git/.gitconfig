@@ -1,0 +1,5 @@
+[user]
+	email = hcalla93@gmail.com
+	name = Harry Callahan
+[core]
+	excludesfile=~/.gitignore_global
