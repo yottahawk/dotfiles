@@ -20,8 +20,9 @@ echo "***"
 echo " "
 
 sudo apt-get -qq install -y git
-# git clone https://www.github.com/deadbits/ubuntu-bootstrap
-# cd ubuntu-bootstrap
+mkdir ~/.dotfiles
+git clone https://github.com/yottahawk/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
 
 clear
 
