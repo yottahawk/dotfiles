@@ -19,14 +19,12 @@ echo "Ubuntu Boostrap script for me!"
 echo "***"
 echo " "
 
-sudo apt-get -qq install -y git
-mkdir ~/.dotfiles
-git clone https://github.com/yottahawk/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
+sudo apt-get update -y && sudo apt-get upgrade -y
+# Useful requirements to install right now...
+sudo apt-get -qq install -y git curl xterm whiptail make stow
 
 #############################################################################################
 # Next, ask the user what they actually want to do regarding the bootstrapping process..... #
-#############################################################################################
 
 # Title of script set
 TITLE="Bootsrapping and dotfile setup"
@@ -40,8 +38,9 @@ function main {
 		--menu "\nWhat would you like to do?" \
 		--cancel-button "Quit" \
 		$LINES $COLUMNS $(( $LINES - 12 )) \
-		'all'                   'Perform all below configuration (full setup)' \
-		'dotfiles'              'Setup all dotfiles' \
+		'fresh_install'         'Full bootstrap for new system (may wipe existing settings)' \
+		'dotfiles'              'Delete all existing dotfiles, and symlink tracked ones' \
+		'restow'                'Unstow and restow all user dotfiles' \
 		3>&1 1>&2 2>&3)
 	# check exit status
 	if [ $? = 0 ]; then
@@ -66,26 +65,32 @@ function quit {
 	fi
 }
 
-function all {
+function fresh_install {
     # Perform all of the config possible for the bootstrap process....
     ###
-    make
+    sudo make -C ~/.dotfiles/ fresh_install
     ###
-    echo " "
-    read -n 1 -s -r -p "Done! Press any key to continue..."
-    echo " "
-	  if (whiptail --title "Finished!" --yesno "Return to menu?" --defaultno 8 56) then
-		   main
-	  else
-       exit 99
-	  fi
+    return_to_menu
 }
 
 function dotfiles {
     # Install all user dotfiles by using the appropriate Makefile target....
     ###
-    make fresh_dotfiles
+    sudo make -C ~/.dotfiles/ fresh_install
     ###
+    return_to_menu
+}
+
+function restow {
+    # Install all user dotfiles by using the appropriate Makefile target....
+    ###
+    sudo make -C ~/.dotfiles/ restow
+    ##
+    return_to_menu
+}
+
+function return_to_menu {
+    # Prompt user to return to menu?
     echo " "
     read -n 1 -s -r -p "Done! Press any key to continue..."
     echo " "
