@@ -62,7 +62,7 @@ ifndef SPACEMACS
 	@echo "Installing spacemacs"
 	rm -rf ~/.emacs.d
 	git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
-	cd ~/.emacs.d \
+	cd ~/.emacs.d && \
 	git checkout -t origin/develop
 else
 	@echo "Spacemacs is already cloned"
