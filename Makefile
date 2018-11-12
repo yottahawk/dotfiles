@@ -67,3 +67,15 @@ ifndef SPACEMACS
 else
 	@echo "Spacemacs is already cloned"
 endif
+
+# https://askubuntu.com/questions/1077061/how-do-i-install-nvidia-and-cuda-drivers-into-ubuntu
+nvidia:
+	@echo -n "Are you sure you want to install nvidia drivers? " && read ans && [ $$ans == y ]
+	sudo rm /etc/apt/sources.list.d/cuda*
+	sudo apt remove nvidia-cuda-toolkit
+	sudo apt remove nvidia-*
+	sudo apt update
+	sudo apt-key adv --fetch-keys  http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+	sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
+	sudo apt update
+	sudo apt install nvidia-driver-410
