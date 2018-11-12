@@ -2,7 +2,7 @@ GIT   := $(shell command -v git 2> /dev/null)
 EMACS := $(shell command -v emacs 2> /dev/null)
 CHROME := $(shell command -v google-chrome 2> /dev/null)
 SPACEMACS := $(wildcard ~/.emacs.d/spacemacs.mk)
-
+GUAKE   := $(shell command -v guake 2> /dev/null)
 
 all:
 	@echo " "
@@ -79,3 +79,10 @@ nvidia:
 	sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
 	sudo apt update
 	sudo apt install nvidia-driver-410
+
+guake:
+ifndef GUAKE
+	sudo apt-get install -y guake
+else
+	@echo "Guake is already installed"
+endif
