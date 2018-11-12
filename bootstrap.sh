@@ -41,10 +41,11 @@ function main {
 		'fresh_install'         'Full bootstrap for new system (may wipe existing settings)' \
 		'dotfiles'              'Delete all existing dotfiles, and symlink tracked ones' \
 		'restow'                'Unstow and restow all user dotfiles' \
+    'make_list_exit'        'Install another make target' \
 		3>&1 1>&2 2>&3)
 	# check exit status
 	if [ $? = 0 ]; then
-		echo "Starting '$MAIN' function"
+		# echo "Starting '$MAIN' function"
 		$MAIN
 	else
 		# Quit
@@ -54,6 +55,18 @@ function main {
 }
 
 # --clear
+MAKETARGETS=$(make list)
+function make_list_exit {
+    clear
+    echo " "
+    echo "See the following list for all possible make-targets :"
+    echo " "
+    echo $MAKETARGETS
+    echo " "
+    echo "go nuts!"
+    echo " "
+    exit 99
+}
 
 # Quit
 function quit {
