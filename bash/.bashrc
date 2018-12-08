@@ -115,3 +115,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# Remap the capslock key to ctrl
+setxkbmap -layout us -option ctrl:nocaps
