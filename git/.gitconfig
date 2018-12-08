@@ -3,3 +3,5 @@
 	name = Harry Callahan
 [core]
 	excludesfile=~/.gitignore_global
+[status]
+	showUntrackedFiles=all
