@@ -328,6 +328,23 @@ you should place your code here."
   (require 'exec-path-from-shell)
   (exec-path-from-shell-initialize)
 
+  ;; Demo the vhdl_ls language server demonstrator, using eglot
+  (require 'eglot)
+  (add-to-list 'eglot-server-programs
+               '(vhdl-mode . ("~/Projects/rust_hdl/target/release/vhdl_ls")))
+
+  ;; Next demo the language server using the emacs lsp/lsp_ui packages
+  (require 'lsp-mode)
+  (lsp-define-stdio-client
+   lsp-vhdl-mode
+   "VHDL"
+   (lsp-make-traverser "vhdl_ls.toml")
+   '("~/Projects/rust_hdl/target/release/vhdl_ls"))
+  (require 'lsp-ui)
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  (add-hook 'vhdl-mode-hook 'flycheck-mode)
+  (add-hook 'vhdl-mode-hook 'lsp-vhdl-mode-enable)
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
