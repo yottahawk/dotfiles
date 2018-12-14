@@ -328,6 +328,9 @@ you should place your code here."
   (require 'exec-path-from-shell)
   (exec-path-from-shell-initialize)
 
+  ;; Always follow symlinks
+  (setq vc-follow-symlinks t)
+
   ;; Demo the vhdl_ls language server demonstrator, using eglot
   (require 'eglot)
   (add-to-list 'eglot-server-programs
