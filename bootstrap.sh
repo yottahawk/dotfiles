@@ -55,13 +55,12 @@ function main {
 }
 
 # --clear
-MAKETARGETS=$(make list)
 function make_list_exit {
     clear
     echo " "
     echo "See the following list for all possible make-targets :"
     echo " "
-    echo $MAKETARGETS
+    sudo make -sC ~/.dotfiles/ list
     echo " "
     echo "go nuts!"
     echo " "
