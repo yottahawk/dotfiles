@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Hidden=false
+NoDisplay=true
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+Name[en_GB]=remapcaps
+Name=remapcaps
+Comment[en_GB]=
+Comment=
+Exec=/home/harry/.dotfiles/remapcaps.sh
