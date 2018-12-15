@@ -9,7 +9,7 @@ all:
 	@echo "No recipe in 'all' just yet!"
 	@echo "TODO : install applications, setup dotfiles, run configurations...."
 
-clean: unstow
+uninstall: unstow
 	sudo apt-get remove -y google-chrome-stable emacs26
 	rm -rf ~/.emacs.d
 
