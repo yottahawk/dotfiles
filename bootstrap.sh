@@ -23,6 +23,8 @@ sudo apt-get update -y && sudo apt-get upgrade -y
 # Useful requirements to install right now...
 sudo apt-get -qq install -y git curl xterm whiptail make stow
 
+git clone https://github.com/yottahawk/dotfiles ~/.dotfiles/
+
 #############################################################################################
 # Next, ask the user what they actually want to do regarding the bootstrapping process..... #
 
