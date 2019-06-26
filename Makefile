@@ -74,6 +74,9 @@ else
 	@echo "Spacemacs is already cloned"
 endif
 
+adobe_source_code_pro: env
+	~/.dotfiles/spacemacs/install_font_adobe_source_code_pro.sh
+
 # https://askubuntu.com/questions/1077061/how-do-i-install-nvidia-and-cuda-drivers-into-ubuntu
 nvidia:
 	@echo -n "Are you sure you want to install nvidia drivers? " && read ans && [ $$ans == y ]
@@ -92,6 +95,9 @@ ifndef GUAKE
 else
 	@echo "Guake is already installed"
 endif
+
+env:
+	find . -iname "*.sh" -exec chmod +x {} +
 
 .PHONY: list
 list:
