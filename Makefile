@@ -56,9 +56,9 @@ endif
 
 emacs:
 ifndef EMACS
-	sudo add-apt-repository -y ppa:kelleyk/emacs
-	sudo apt-get update -y
-	sudo apt-get install -y emacs26
+	sudo -E add-apt-repository -y ppa:kelleyk/emacs
+	sudo -E apt-get update -y
+	sudo -E apt-get install -y emacs26
 else
 	@echo "Emacs is already installed"
 endif

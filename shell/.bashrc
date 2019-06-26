@@ -117,4 +117,5 @@ if ! shopt -oq posix; then
 fi
 
 # exports
-export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+# export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+
