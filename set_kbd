@@ -1,0 +1,46 @@
+# Check if we're running on my laptop...
+is_laptop=$(uname -a | grep -q GL502)
+if [ $? = 0 ]; then
+    # Correctly setup the xkbmap for my Asus GL502 (Laptop) built-in keyboard
+    # Get all XIDs which match the 'Asus Keyboard' and 'keyboard' criteria (there may be a few, not sure why...)
+    ids=$(xinput -list | grep -E "(Asus Keyboard)(\s)*(id).*(keyboard)"  | sed 's/^.*id=\|\t\[.*$//gm')
+    # Loop over all matches, setting up the keyboard as desired for all ids. This is dumb, but guarantees we hit the right one...
+    for id in $ids
+    do
+        # Construct the setxkbmap command.....
+        setxkbmap \
+            -device $id \
+            -layout us \
+            -option ctrl:nocap
+    done
+
+    echo "Asus Laptop keyboard detected, and configured."
+fi
+
+# Correctly setup the xkbmap for my Razer BlackWidow 2013 keyboard, if it is present
+# Extract the line which correctly identifies the keyboard
+id_line=$(xinput -list | grep -E "(Razer BlackWidow 2013)(\s)*(id).*(keyboard)")
+
+if [ $? = 0 ]; then
+    # Keyboard is present
+
+    # Extract the id number
+    # sed 's/<REGEXP>//g' will replace with an empty string, everything that doesn't match <REGEXP>
+    # <REGEXP> == ^.*id=\|\t\[.*$ == Match start of line, then any number of chars, then the string id=, or, match a tab char, followed by a [ char, then any number of chars, up to the end of the line.
+    # This effectively removes the strings before and after the id number
+    device_id=$(echo "$id_line" | sed 's/^.*id=\|\t\[.*$//gm')
+
+    # Construct the setxkbmap command.....
+    setxkbmap \
+        -device $device_id \
+        -layout gb \
+        -variant extd \
+        -option ctrl:nocaps
+
+    echo "Razer BlackWidow keyboard detected, and configured."
+else
+    echo "Razer BlackWidow keyboard not present"
+fi
+
+echo "All keyboards configured."
+echo "Exiting...."
