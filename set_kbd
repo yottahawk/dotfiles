@@ -11,7 +11,7 @@ if [ $? = 0 ]; then
         setxkbmap \
             -device $id \
             -layout us \
-            -option ctrl:nocap
+            -option ctrl:nocaps
     done
 
     echo "Asus Laptop keyboard detected, and configured."
