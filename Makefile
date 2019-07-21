@@ -15,12 +15,6 @@ uninstall: unstow
 
 # Clean any existing and matching dotfiles, then use GNU stow to symlink all the repo files...
 fresh_install: delete_existing unstow stow
-# Also use Gnome Autostart to remap the capslock key to ctrl
-	sudo chmod +x ~/.dotfiles/remapcaps.sh
-# Delete last line of .desktop file, and append the abspath to the sh script
-	tail -n 1 "remapcaps.desktop" | wc -c | xargs -I {} truncate "remapcaps.desktop" -s -{}
-	echo "Exec=/home/"$(shell whoami)"/.dotfiles/remapcaps.sh" >> ~/.dotfiles/remapcaps.desktop
-	sudo mkdir -p ~/.config/autostart && sudo cp ~/.dotfiles/remapcaps.desktop ~/.config/autostart/remapcaps.desktop
 
 restow: unstow stow
 
