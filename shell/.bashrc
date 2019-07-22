@@ -115,6 +115,11 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# exports
-# export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+##################################################################
 
+# https://virtualenvwrapper.readthedocs.io/en/latest/install.html
+FILE=/usr/local/bin/virtualenvwrapper.sh
+if test -f "$FILE"; then
+    # This script needs to be re-sourced upon each new shell creation
+    source /usr/local/bin/virtualenvwrapper.sh
+fi
