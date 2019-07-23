@@ -1,5 +1,7 @@
 # Add user-binaries dir to path (Required for python packages installed with --user)
 export PATH="$HOME/.local/bin:$PATH"
+# Python/Pip https cert-store access on Ubuntu
+export REQUESTS_CA_BUNDLE="/etc/ssl/certs/ca-certificates.crt"
 
 # Rust development
 # export PATH="$PATH:$HOME/.cargo/bin"
