@@ -344,6 +344,8 @@ you should place your code here."
   (global-company-mode)
   (setq company-idle-delay 1)
 
+  (add-to-list 'auto-mode-alist '("\\.core$" . yaml-mode))
+
   ;; ;; Demo the vhdl_ls language server demonstrator, using eglot
   ;; (require 'eglot)
   ;; (add-to-list 'eglot-server-programs
