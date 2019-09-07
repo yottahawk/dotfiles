@@ -61,7 +61,7 @@ values."
              ranger-cleanup-on-disable t
              ranger-cleanup-eagerly t)
      (shell :variables
-            explicit-shell-file-name "C:/cygwin64/bin/bash.exe"
+            explicit-shell-file-name "/bin/bash"
             shell-default-shell 'shell)
      shell-scripts
      ;; spell-checking

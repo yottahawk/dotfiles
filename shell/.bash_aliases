@@ -3,3 +3,26 @@ alias reboot="shutdown -r 0"
 alias logout="gnome-session-quit --force"
 alias path='tr : "\n" <<<$PATH'
 alias printenv="printenv | sort"
+
+# Good Article :
+# https://dev.to/victoria/how-to-do-twice-as-much-with-half-the-keystrokes-using-bashrc-4o9k
+
+# Always copy contents of directories (r)ecursively and explain (v) what was done
+alias cp='cp -rv'
+# Explain (v) what was done when moving a file
+alias mv='mv -v'
+# Remove recursively/directories(r) and force (f). Explain (v) what was done when moving a file
+alias rm='rm -rfv'
+# Explain (v) what was done when moving a file
+alias mv='mv -v'
+# Create any non-existent (p)arent directories and explain (v) what was done
+alias mkdir='mkdir -pv'
+
+# List contents with colors for file types, (A)lmost all hidden files (without . and ..), (1) entry per line
+alias ls='ls --color=always \
+             --group-directories-first \
+             -A1'
+# List contents with colors for file types, (A)lmost all hidden files, use (l)ong listing format
+alias ll='ls --color=always \
+             --group-directories-first \
+              -Al'
