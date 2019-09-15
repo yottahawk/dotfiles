@@ -18,11 +18,22 @@ alias mv='mv -v'
 # Create any non-existent (p)arent directories and explain (v) what was done
 alias mkdir='mkdir -pv'
 
-# List contents with colors for file types, (A)lmost all hidden files (without . and ..), (1) entry per line
-alias ls='ls --color=always \
-             --group-directories-first \
-             -A1'
-# List contents with colors for file types, (A)lmost all hidden files, use (l)ong listing format
-alias ll='ls --color=always \
-             --group-directories-first \
-              -Al'
+# List contents with colors for file types
+alias l='\ls --color=always \
+             --group-directories-first'
+# List contents with colors, (1) entry per line
+alias ls='l --color=always \
+            --group-directories-first \
+            -1'
+# List contents with colors, (A)lmost all hidden files (without . and ..), (1) entry per line
+alias la='l --color=always \
+            --group-directories-first \
+            -A1'
+# List contents with colors, (A)lmost all hidden files, use (l)ong listing format
+alias ll='l --color=always \
+            --group-directories-first \
+            -Al'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'

@@ -339,24 +339,18 @@ you should place your code here."
   ;; Set escape keybinding to "jk"
   (setq-default evil-escape-key-sequence "jk")
 
-  ;; Load all environment variables into inferior shells...
-  ;; (require 'exec-path-from-shell)
-  ;; (exec-path-from-shell-initialize)
-
   (setq projectile-switch-project-action 'projectile-dired)
-
-  (add-to-list 'auto-mode-alist '("\\.core$" . yaml-mode))
 
   (global-company-mode)
   (setq company-idle-delay 1)
 
   (add-to-list 'auto-mode-alist '("\\.core$" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.bash_aliases$" . shell-script-mode))
 
   ;; ;; Demo the vhdl_ls language server demonstrator, using eglot
   ;; (require 'eglot)
   ;; (add-to-list 'eglot-server-programs
   ;;              '(vhdl-mode . ("~/Projects/rust_hdl/target/release/vhdl_ls")))
-
   ;; ;; Next demo the language server using the emacs lsp/lsp_ui packages
   ;; (require 'lsp-mode)
   ;; (lsp-define-stdio-client
@@ -368,7 +362,6 @@ you should place your code here."
   ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   ;; (add-hook 'vhdl-mode-hook 'flycheck-mode)
   ;; (add-hook 'vhdl-mode-hook 'lsp-vhdl-mode-enable)
-
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
