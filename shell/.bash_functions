@@ -1,3 +1,5 @@
+# -*-Shell-script-*-
+
 # Limit length of ls output
 function ls_limited () {
     if [ -z $1 ]; then

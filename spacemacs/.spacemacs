@@ -336,36 +336,41 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  ;; Set escape keybinding to "jk"
+  ;; -----UX------
   (setq-default evil-escape-key-sequence "jk")
   ;; Additional leader-key bindings
   (evil-leader/set-key
     "q q" 'spacemacs/frame-killer
     "q f" nil)
-
-  (setq projectile-switch-project-action 'projectile-dired)
-
   (global-company-mode)
   (setq company-idle-delay 1)
+  (setq projectile-switch-project-action 'projectile-dired)
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 
-  (add-to-list 'auto-mode-alist '("\\.core$" . yaml-mode))
-  (add-to-list 'auto-mode-alist '("\\.bash_aliases$" . shell-script-mode))
-
-  ;; ;; Demo the vhdl_ls language server demonstrator, using eglot
-  ;; (require 'eglot)
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '(vhdl-mode . ("~/Projects/rust_hdl/target/release/vhdl_ls")))
-  ;; ;; Next demo the language server using the emacs lsp/lsp_ui packages
-  ;; (require 'lsp-mode)
-  ;; (lsp-define-stdio-client
-  ;;  lsp-vhdl-mode
-  ;;  "VHDL"
-  ;;  (lsp-make-traverser "vhdl_ls.toml")
-  ;;  '("~/Projects/rust_hdl/target/release/vhdl_ls"))
-  ;; (require 'lsp-ui)
-  ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-  ;; (add-hook 'vhdl-mode-hook 'flycheck-mode)
-  ;; (add-hook 'vhdl-mode-hook 'lsp-vhdl-mode-enable)
+  ;; -----LANG-------
+  ;; Demo the "vhdl_ls" language server
+  ;; https://github.com/kraigher/rust_hdl
+  (setq rust-hdl-path "/home/harry/Projects/yottahawk/rust_hdl")
+  (if (file-directory-p rust-hdl-path)
+      (progn
+        ;; From the README...
+        (require 'lsp-mode)
+        (lsp-register-client
+         (make-lsp-client :new-connection (lsp-stdio-connection (format "%s/target/release/vhdl_ls" rust-hdl-path))
+                          :major-modes '(vhdl-mode)
+                          :server-id 'vhdl-lsp))
+        (add-to-list 'lsp-language-id-configuration '(vhdl-mode . "vhdl-mode"))
+        (add-hook 'vhdl-mode-hook #'lsp)
+        ;; Extra Hack...
+        ;; "When opening vhdl files with the above lsp-mode client, it triggers an error of...
+        ;; (undefined-variable spacemacs-jump-handlers-vhdl-mode)
+        ;; AFAICT the below fn is the only way to do so, and searching .emacs.d only shows it within the
+        ;; config.el file for the spacemacs GTAGS layer.
+        ;; Where should this go for major-modes which don't have their own layer within spacemacs?"
+        ;; -> (does this need a PR in spacemacs or am I being dense?
+        ;;     git-blame on the code in GTAGS config.el shows unchanged since 2016...)
+        (spacemacs|define-jump-handlers vhdl-mode))
+    )
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
