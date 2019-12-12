@@ -7,6 +7,16 @@ case $- in
       *) return;;
 esac
 
+# Detect Platform
+if [ -n "${COMSPEC}" ]; then
+    _IS_WINDOWS=1
+    if [ -n "$(which cygpath 2>/dev/null)" ]; then
+        _IS_CYGWIN=1
+    fi
+else
+    _IS_LINUX=1
+fi
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -72,8 +82,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-################################################################################
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -85,51 +93,66 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# https://virtualenvwrapper.readthedocs.io/en/latest/install.html
-FILE=/usr/local/bin/virtualenvwrapper.sh
-if test -f "$FILE"; then
-    # This script needs to be re-sourced upon each new shell creation
-    source /usr/local/bin/virtualenvwrapper.sh
+# source user-defined functions
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
 fi
 
-function ls_limited () {
-    if [ -z $1 ]; then
-        max_lines=20
-    else
-        max_lines=$1
-    fi
-    linum=$(ls |\
-                head -n $max_lines |\
-                tee /dev/tty |\
-                wc -l)
-    # Print string if output is truncated....
-    if test $linum -eq $max_lines; then
-        echo -e "\e[4m...cont'd...\e[24m"
-        # echo "(Output limited to $max_lines entries)"
-    fi
-}
+################################################################################
 
-# Show contents of the directory after changing to it
-function cd () {
-    case "$#" in
-        0 )
-            # Need this option to preserve cd-to-HOME behaviour. Don't 'ls' the HOME dir.
-            builtin cd
-            return $!
-            ;;
-        1 )
-            # Cd and print directory. Limit output to $max_lines
-            if [ ! -d "$1" ]; then
-                # Catch options passed to cd
-                builtin cd $1
-                return
-            fi
-            builtin cd "$1"
-            ls_limited 10
-            ;;
-        2 )
-            builtin cd $@
-            return $!
-            ;;
-    esac
-}
+if [[ -v _IS_CYGWIN ]]; then
+    # Windows-Only here
+
+    # This command helps to run shell scripts on Windows using cygwin bash.
+    # The "igncr" option makes bash ignore the CR characters, part of DOS line endings
+    # https://stackoverflow.com/questions/14598753/running-bash-script-in-cygwin-on-windows-7
+    export SHELLOPTS
+    set -o igncr
+fi
+
+
+if [[ -v _IS_LINUX ]]; then
+    # Linux-Only here
+
+    # The script '.dotfiles/set_kbd' sets up the keyboard layouts for whichever system I am working on.
+    # For some reason, simply sourcing the script does not work, as the setxkbmap command is,
+    # on Ubuntu 19.04, overridden at some point later in the login process.
+    # I have spent way too long trying to fix this, and while I don't like the sleep-method, it certainly works. TBC
+    /bin/bash -c "sleep 3 && source ~/.dotfiles/set_kbd" &>/dev/null &
+
+    ### PYTHON ###
+    ##############################################################################
+
+    # Add dir containing user-binaries to path (Required for python packages installed with --user)
+    prependToPATH $HOME/.local/bin
+    # Python/Pip https cert-store access on Ubuntu
+    export REQUESTS_CA_BUNDLE="/etc/ssl/certs/ca-certificates.crt"
+
+    # https://virtualenvwrapper.readthedocs.io/en/latest/install.html
+    FILE=/usr/local/bin/virtualenvwrapper.sh
+    if [[ -f "$FILE" ]]; then
+        export WORKON_HOME=$HOME/.virtualenvs
+        export PROJECT_HOME=$HOME/Projects
+        export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+        export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
+        # This script needs to be re-sourced upon each new shell creation
+        source /usr/local/bin/virtualenvwrapper.sh
+    fi
+
+    # https://github.com/pyenv/pyenv
+    if [[ -v $PYENV_ROOT ]]; then
+        echo "True!"
+        export PYENV_ROOT=$HOME/.pyenv
+        prependToPATH $PYENV_ROOT/bin
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+    fi
+
+    ### RUST ###
+    ##############################################################################
+
+    # Rust development
+    prependToPATH $HOME/.cargo/bin
+    export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+
+fi

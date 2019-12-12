@@ -1,8 +1,12 @@
 alias chrome="google-chrome"
 alias reboot="shutdown -r 0"
 alias logout="gnome-session-quit --force"
-alias path='tr : "\n" <<<$PATH'
+alias path='echo "---FIRST---:$PATH:---LAST---" | tr : "\n"'
 alias printenv="printenv | sort"
+
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
 
 # Good Article :
 # https://dev.to/victoria/how-to-do-twice-as-much-with-half-the-keystrokes-using-bashrc-4o9k

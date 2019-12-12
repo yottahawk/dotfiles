@@ -7,7 +7,9 @@ GUAKE   := $(shell command -v guake 2> /dev/null)
 all:
 	@echo " "
 	@echo "No recipe in 'all' just yet!"
+	@echo "Execute the script bootstrap.sh, which will present the different available make targets"
 	@echo "TODO : install applications, setup dotfiles, run configurations...."
+	@echo " "
 
 uninstall: unstow
 	sudo apt-get remove -y google-chrome-stable emacs26
