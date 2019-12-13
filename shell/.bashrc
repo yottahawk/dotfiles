@@ -117,10 +117,7 @@ if [[ -v _IS_LINUX ]]; then
     # Linux-Only here
 
     # The script '.dotfiles/set_kbd' sets up the keyboard layouts for whichever system I am working on.
-    # For some reason, simply sourcing the script does not work, as the setxkbmap command is,
-    # on Ubuntu 19.04, overridden at some point later in the login process.
-    # I have spent way too long trying to fix this, and while I don't like the sleep-method, it certainly works. TBC
-    /bin/bash -c "sleep 3 && source ~/.dotfiles/set_kbd" &>/dev/null &
+    . ~/.dotfiles/set_kbd &>/dev/null
 
     ### PYTHON ###
     ##############################################################################
@@ -138,7 +135,7 @@ if [[ -v _IS_LINUX ]]; then
         export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
         export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
         # This script needs to be re-sourced upon each new shell creation
-        source /usr/local/bin/virtualenvwrapper.sh
+        . /usr/local/bin/virtualenvwrapper.sh
     fi
 
     # https://github.com/pyenv/pyenv
