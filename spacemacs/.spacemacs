@@ -346,6 +346,7 @@ you should place your code here."
   (setq company-idle-delay 1)
   (setq projectile-switch-project-action 'projectile-dired)
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+  (setq lsp-file-watch-threshold 20000)
 
   ;; -----LANG-------
   ;; Demo the "vhdl_ls" language server
@@ -369,8 +370,6 @@ you should place your code here."
                                               ("RUST_BACKTRACE" . "full")))))
         (add-to-list 'lsp-language-id-configuration '(vhdl-mode . "vhdl-mode"))
         (add-hook 'vhdl-mode-hook #'lsp)
-        (setq lsp-debounce-full-sync-notifications t)
-        (setq lsp-debounce-full-sync-notifications-interval 0.1)
 
         ;; Spacemacs : Extra Hack needed...
         ;; "When opening vhdl files with the above lsp-mode client, it triggers an error of...
