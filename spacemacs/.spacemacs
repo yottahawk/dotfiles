@@ -38,7 +38,8 @@ values."
      rust
      c-c++
      ruby
-     lsp
+     (lsp :variables
+          lsp-rust-server 'rust-analyzer)
      (colors :variables
              colors-enable-nyan-cat-progress-bar t)
      themes-megapack
@@ -327,6 +328,11 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+
+  ;; Disable the built-in vhdl-mode imenu functionality....
+  (advice-add 'vhdl-index-menu-init :override
+              (lambda () (message "vhdl-index-menu-init : now overriden!")))
+
   )
 
 (defun dotspacemacs/user-config ()
@@ -346,44 +352,54 @@ you should place your code here."
   (setq company-idle-delay 1)
   (setq projectile-switch-project-action 'projectile-dired)
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-  (setq lsp-file-watch-threshold 20000)
+  (setq lsp-file-watch-threshold 30000)
 
   ;; -----LANG-------
   ;; Demo the "vhdl_ls" language server
   ;; https://github.com/kraigher/rust_hdl
   (setq rust-hdl-path "/home/harry/Projects/yottahawk/rust_hdl")
+  (setq rust-hdl-vhdl-ls-path (format "%s/target/release/vhdl_ls" rust-hdl-path))
   (if (file-directory-p rust-hdl-path)
-      (progn
+      ;; THEN
+      (if (file-exists-p rust-hdl-vhdl-ls-path)
+          ;; THEN
+          (progn
 
-        ;; From the README...
-        (require 'lsp-mode)
-        (lsp-register-client
-         (make-lsp-client :new-connection (lsp-stdio-connection (format "%s/target/release/vhdl_ls" rust-hdl-path))
-                          :major-modes '(vhdl-mode)
-                          :server-id 'vhdl-lsp
-                          ;; Add ENVIRONMENT VARIABLES for the server process
-                          ;; ------------------------------------------------
-                          ;; RUST_LOG - env_logger control for println!-style debugging -> goes to *vhdl-lsp::stderr* buffer
-                          ;; RUST_BACKTRACE - enables backtrace upon error https://doc.rust-lang.org/std/backtrace/index.html
-                          :environment-fn (lambda ()
-                                            '(("RUST_LOG" . "debug")
-                                              ("RUST_BACKTRACE" . "full")))))
-        (add-to-list 'lsp-language-id-configuration '(vhdl-mode . "vhdl-mode"))
-        (add-hook 'vhdl-mode-hook #'lsp)
+            ;; From the README...
+            (require 'lsp-mode)
+            (lsp-register-client
+             (make-lsp-client :new-connection (lsp-stdio-connection rust-hdl-vhdl-ls-path)
+                              :major-modes '(vhdl-mode)
+                              :server-id 'vhdl-lsp
+                              ;; Add ENVIRONMENT VARIABLES for the server process
+                              ;; ------------------------------------------------
+                              ;; RUST_LOG - env_logger control for println!-style debugging -> goes to *vhdl-lsp::stderr* buffer
+                              ;; RUST_BACKTRACE - enables backtrace upon error https://doc.rust-lang.org/std/backtrace/index.html
+                              :environment-fn (lambda ()
+                                                '(("RUST_LOG" . "debug")
+                                                  ("RUST_BACKTRACE" . "full")))))
+            (add-to-list 'lsp-language-id-configuration '(vhdl-mode . "vhdl-mode"))
+            (add-hook 'vhdl-mode-hook #'lsp)
 
-        ;; Spacemacs : Extra Hack needed...
-        ;; "When opening vhdl files with the above lsp-mode client, it triggers an error of...
-        ;; (undefined-variable spacemacs-jump-handlers-vhdl-mode)
-        ;; AFAICT the below fn is the only way to do so, and searching .emacs.d only shows it within the
-        ;; config.el file for the spacemacs GTAGS layer.
-        ;; Where should this go for major-modes which don't have their own layer within spacemacs?"
-        ;; -> (does this need a PR in spacemacs or am I being dense?
-        ;;     git-blame on the code in GTAGS config.el shows unchanged since 2016...)
-        (spacemacs|define-jump-handlers vhdl-mode)
+            ;; Spacemacs : Extra Hack needed...
+            ;; "When opening vhdl files with the above lsp-mode client, it triggers an error of...
+            ;; (undefined-variable spacemacs-jump-handlers-vhdl-mode)
+            ;; AFAICT the below fn is the only way to do so, and searching .emacs.d only shows it within the
+            ;; config.el file for the spacemacs GTAGS layer.
+            ;; Where should this go for major-modes which don't have their own layer within spacemacs?"
+            ;; -> (does this need a PR in spacemacs or am I being dense?
+            ;;     git-blame on the code in GTAGS config.el shows unchanged since 2016...)
+            (spacemacs|define-jump-handlers vhdl-mode)
 
-        ;; DEV
-        (setq lsp-log-io t)
-        (setq lsp-print-performance nil)))
+            ;; DEV
+            (setq lsp-enable-imenu t)
+            (setq lsp-log-io t)
+            (setq lsp-print-performance nil))
+
+        ;; ELSE
+        (error (format "vhdl_ls binary not found at '%s'. Run 'cargo build --release' to build it." rust-hdl-vhdl-ls-path)))
+    ;; ELSE
+    (error (format "rust_hdl repo not found. Have you cloned it to %s?" rust-hdl-path)))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -414,7 +430,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (company-tern tern company-emoji auto-complete-rst alchemist elixir-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode insert-shebang ibuffer-projectile hy-mode dash-functional helm-pydoc fish-mode dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat cython-mode company-shell company-anaconda anaconda-mode pythonic ranger xterm-color smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub treepy let-alist graphql with-editor eshell-z eshell-prompt-extras esh-help diff-hl company-statistics company auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+    (web-beautify utop tuareg caml rjsx-mode prettier-js ocp-indent ob-elixir nodejs-repl mvn meghanada maven-test-mode lsp-java livid-mode skewer-mode simple-httpd json-navigator hierarchy js2-refactor multiple-cursors js2-mode js-doc groovy-mode groovy-imports pcache gradle-mode flycheck-ocaml merlin flycheck-mix flycheck-credo emojify emoji-cheat-sheet-plus dune company-tern tern company-emoji auto-complete-rst alchemist elixir-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode insert-shebang ibuffer-projectile hy-mode dash-functional helm-pydoc fish-mode dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat cython-mode company-shell company-anaconda anaconda-mode pythonic ranger xterm-color smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-company helm-c-yasnippet gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub treepy let-alist graphql with-editor eshell-z eshell-prompt-extras esh-help diff-hl company-statistics company auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
