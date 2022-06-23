@@ -43,3 +43,8 @@ alias ll='l --color=always \
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+
+alias nixd='nix develop'
+alias nixfu='nix flake update'
+
+alias sudop='sudo env PATH=$PATH'

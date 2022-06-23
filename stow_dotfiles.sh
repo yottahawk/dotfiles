@@ -4,5 +4,5 @@
 cd ~/.dotfiles/
 for d in `ls -d */`;
 do
-    ( stow $d )
+    ( stow $d -n)
 done
